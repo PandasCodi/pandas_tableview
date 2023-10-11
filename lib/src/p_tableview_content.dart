@@ -10,8 +10,10 @@ class PTableViewContent extends StatefulWidget {
   final PTableViewPagination? pagination;
   final EdgeInsets? contentPadding;
   final Decoration? decoration;
+  final Function(int)? onTap;
 
-  const PTableViewContent({Key? key, this.divider, required this.columns, this.backgroundColor, this.decoration, this.contentPadding, this.pagination})
+  const PTableViewContent(
+      {Key? key, this.divider, required this.columns, this.onTap, this.backgroundColor, this.decoration, this.contentPadding, this.pagination})
       : super(key: key);
 
   @override
@@ -19,23 +21,57 @@ class PTableViewContent extends StatefulWidget {
 }
 
 class _PTableViewContentState extends State<PTableViewContent> {
-  final _scrollController = ScrollController();
+  var _scrollController = ScrollController();
+  int _highlightIndex = -1;
+
   @override
   Widget build(BuildContext context) {
-    return Container(
-      color: widget.backgroundColor,
-      decoration: widget.decoration,
-      padding: widget.contentPadding ?? EdgeInsets.zero,
-      child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [...widget.columns
-              .map((e) => Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [e, widget.divider ?? SizedBox.shrink()],
-                  ))
-              .toList(),
-              Spacer(),
-              widget.pagination ?? SizedBox.shrink()],),
+    return IntrinsicWidth(
+        child: Container(
+          height: 200,
+            color: widget.backgroundColor,
+            decoration: widget.decoration,
+            child: RawScrollbar(
+              controller: _scrollController,
+              child: SingleChildScrollView(
+                controller: _scrollController,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [...widget.columns
+                      .asMap()
+                      .entries
+                      .map((e) =>
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          GestureDetector(onTap: () => widget.onTap?.call(e.key),
+                              child: MouseRegion(
+                                cursor: SystemMouseCursors.click,
+                                onEnter: (_) {
+                                  setState(() {
+                                    _highlightIndex = e.key;
+                                  });
+                                },
+                                onExit: (_) {
+                                  setState(() {
+                                    _highlightIndex = -1;
+                                  });
+                                },
+                                child: Container(
+                                  color: _highlightIndex == e.key ? Colors.grey
+                                      .withOpacity(0.2) : Colors.transparent,
+                                  child: Container(
+                                    padding: widget.contentPadding ?? EdgeInsets.zero,
+                                    child: e.value,
+                                  ),
+                                ),
+                              )), widget.divider ?? SizedBox.shrink()],
+                      ))
+                      .toList(),
+                  ],),
+              ),
+            )
+        )
     );
   }
 
@@ -45,3 +81,4 @@ class _PTableViewContentState extends State<PTableViewContent> {
     super.dispose();
   }
 }
+

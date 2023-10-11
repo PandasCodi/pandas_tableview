@@ -6,21 +6,18 @@ import 'package:flutter/material.dart';
 class PTableViewPagination extends StatelessWidget {
   ///Starts from 0
   final int currentPage;
-  final int elementCountPerPage;
-  final int elementsCount;
+  final int pagesCount;
   final int pagesVisible;
   final Function(int) onPageChanged;
 
   const PTableViewPagination(
       {Key? key,
-      required this.currentPage,
-      this.elementCountPerPage = 10,
+        required this.currentPage,
         this.pagesVisible = 4,
-      required this.elementsCount,
-      required this.onPageChanged})
+        required this.pagesCount,
+        required this.onPageChanged})
       : super(key: key);
 
-  int get pagesCount => (elementsCount ~/ elementCountPerPage) + 1;
   List<int> get visiblePagesRange {
     final listNotLimited = List.generate(pagesVisible * 2, (index) => currentPage - pagesVisible + index).toList();
     return listNotLimited.where((e) => e >= 0 && e < pagesCount).toList();

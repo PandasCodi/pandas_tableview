@@ -7,9 +7,11 @@ class PTableViewColumn extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Row(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: rows
+    return Center(
+      child: Row(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: rows
+      )
     );
   }
 }

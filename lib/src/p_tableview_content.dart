@@ -8,12 +8,12 @@ class PTableViewContent extends StatefulWidget {
   final Color? backgroundColor;
   final List<PTableViewColumn> columns;
   final PTableViewPagination? pagination;
-  final EdgeInsets? contentPadding;
+  final double? horizontalPadding;
   final Decoration? decoration;
   final Function(int)? onTap;
 
   const PTableViewContent(
-      {Key? key, this.divider, required this.columns, this.onTap, this.backgroundColor, this.decoration, this.contentPadding, this.pagination})
+      {Key? key, this.divider, required this.columns, this.onTap, this.backgroundColor, this.decoration, this.horizontalPadding, this.pagination})
       : super(key: key);
 
   @override
@@ -26,51 +26,50 @@ class _PTableViewContentState extends State<PTableViewContent> {
 
   @override
   Widget build(BuildContext context) {
-    return IntrinsicWidth(
-        child: Container(
-          height: 200,
-            color: widget.backgroundColor,
-            decoration: widget.decoration,
-            child: RawScrollbar(
-              controller: _scrollController,
-              child: SingleChildScrollView(
-                controller: _scrollController,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [...widget.columns
-                      .asMap()
-                      .entries
-                      .map((e) =>
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          GestureDetector(onTap: () => widget.onTap?.call(e.key),
-                              child: MouseRegion(
-                                cursor: SystemMouseCursors.click,
-                                onEnter: (_) {
-                                  setState(() {
-                                    _highlightIndex = e.key;
-                                  });
-                                },
-                                onExit: (_) {
-                                  setState(() {
-                                    _highlightIndex = -1;
-                                  });
-                                },
-                                child: Container(
-                                  color: _highlightIndex == e.key ? Colors.grey
-                                      .withOpacity(0.2) : Colors.transparent,
-                                  child: Container(
-                                    padding: widget.contentPadding ?? EdgeInsets.zero,
-                                    child: e.value,
-                                  ),
-                                ),
-                              )), widget.divider ?? SizedBox.shrink()],
-                      ))
-                      .toList(),
-                  ],),
-              ),
-            )
+    return Container(
+        width: MediaQuery.of(context).size.width,
+        height: 200,
+        color: widget.backgroundColor,
+        decoration: widget.decoration,
+        child: Scrollbar(
+          controller: _scrollController,
+          child: SingleChildScrollView(
+            controller: _scrollController,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [...widget.columns
+                  .asMap()
+                  .entries
+                  .map((e) =>
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      GestureDetector(onTap: () => widget.onTap?.call(e.key),
+                          child: MouseRegion(
+                            cursor: SystemMouseCursors.click,
+                            onEnter: (_) {
+                              setState(() {
+                                _highlightIndex = e.key;
+                              });
+                            },
+                            onExit: (_) {
+                              setState(() {
+                                _highlightIndex = -1;
+                              });
+                            },
+                            child: Container(
+                              color: _highlightIndex == e.key ? Colors.grey
+                                  .withOpacity(0.2) : Colors.transparent,
+                              child: Container(
+                                padding: EdgeInsets.symmetric(horizontal: widget.horizontalPadding ?? 0),
+                                child: e.value,
+                              ),
+                            ),
+                          )), widget.divider ?? SizedBox.shrink()],
+                  ))
+                  .toList(),
+              ],),
+          ),
         )
     );
   }

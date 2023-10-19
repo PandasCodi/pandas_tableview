@@ -22,44 +22,49 @@ class PTableView extends StatefulWidget {
 
 class _PTableViewState extends State<PTableView> {
   final ScrollController _scrollController = ScrollController();
+
   @override
   Widget build(BuildContext context) {
-    return ClipRRect(
-      borderRadius: widget.borderRadius ?? BorderRadius.zero,
-      child: SizedBox(
-        height: widget.fixedHeight,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Expanded(child: Scrollbar(
-                controller: _scrollController,
-                child: SingleChildScrollView(
-                  controller: _scrollController,
-                  scrollDirection: Axis.horizontal,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      SizedBox(
-                          height: widget.headerHeight,
-                          child: widget.header),
-                      widget.fixedHeight != null ? Expanded(child: widget.content) : widget.content,
-                    ],
+    return LayoutBuilder(builder: (context, constraints) =>
+        ClipRRect(
+          borderRadius: widget.borderRadius ?? BorderRadius.zero,
+          child: SizedBox(
+            height: widget.fixedHeight,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Expanded(child: Scrollbar(
+                    controller: _scrollController,
+                    child: SingleChildScrollView(
+                      controller: _scrollController,
+                      scrollDirection: Axis.horizontal,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          ConstrainedBox(constraints: BoxConstraints(
+                              minWidth: constraints.maxWidth
+                          ), child: SizedBox(
+                              height: widget.headerHeight,
+                              child: widget.header),),
+                          widget.fixedHeight != null ? Expanded(child: widget
+                              .content) : widget.content,
+                        ],
+                      ),
+                    )
+                ),),
+                widget.pagination != null ? Container(
+                  color: widget.paginationBackgroundColor ?? Colors.white,
+                  child: Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+                    child: widget.pagination,
                   ),
-                )
-            ),),
-            widget.pagination != null ? Container(
-              color: widget.paginationBackgroundColor ?? Colors.white,
-              child: Padding(
-                padding: EdgeInsets.symmetric(horizontal: 8, vertical: 8),
-                child: widget.pagination,
-              ),
-            ) : SizedBox.shrink()
-          ],
-        ),
-      ),
-    );
+                ) : SizedBox.shrink()
+              ],
+            ),
+          ),
+        ));
   }
 
   @override

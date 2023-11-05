@@ -48,8 +48,13 @@ class _PTableViewState extends State<PTableView> {
                           ), child: SizedBox(
                               height: widget.headerHeight,
                               child: widget.header),),
-                          widget.fixedHeight != null ? Expanded(child: widget
-                              .content) : widget.content,
+                          widget.fixedHeight != null ? Expanded(child:
+                          ConstrainedBox(
+                            constraints: BoxConstraints(
+                              minWidth: constraints.maxWidth
+                            ),
+                            child: widget.content,
+                          ),): widget.content,
                         ],
                       ),
                     )

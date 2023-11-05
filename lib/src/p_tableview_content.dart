@@ -26,50 +26,53 @@ class _PTableViewContentState extends State<PTableViewContent> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-        color: widget.backgroundColor,
-        decoration: widget.decoration,
-        child: Scrollbar(
-          controller: _scrollController,
-          child: SingleChildScrollView(
+    return LayoutBuilder(builder: (context,constraints){
+      return Container(
+          color: widget.backgroundColor,
+          decoration: widget.decoration,
+          child: Scrollbar(
             controller: _scrollController,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: widget.columns
-                  .asMap()
-                  .entries
-                  .map((e) =>
-                  GestureDetector(onTap: () => widget.onTap?.call(e.key),
-                      child: MouseRegion(
-                        cursor: SystemMouseCursors.click,
-                        onEnter: (_) {
-                          setState(() {
-                            _highlightIndex = e.key;
-                          });
-                        },
-                        onExit: (_) {
-                          setState(() {
-                            _highlightIndex = -1;
-                          });
-                        },
-                        child: Container(
-                          decoration: BoxDecoration(
-                              color: _highlightIndex == e.key ? Colors.grey
-                                  .withOpacity(0.2) : Colors.transparent,
-                              border: Border(bottom: widget.divider ?? BorderSide.none)
-                          ),
+            child: SingleChildScrollView(
+              controller: _scrollController,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: widget.columns
+                    .asMap()
+                    .entries
+                    .map((e) =>
+                    ConstrainedBox(constraints: BoxConstraints(minWidth: constraints.minWidth),
+                    child: GestureDetector(onTap: () => widget.onTap?.call(e.key),
+                        child: MouseRegion(
+                          cursor: SystemMouseCursors.click,
+                          onEnter: (_) {
+                            setState(() {
+                              _highlightIndex = e.key;
+                            });
+                          },
+                          onExit: (_) {
+                            setState(() {
+                              _highlightIndex = -1;
+                            });
+                          },
                           child: Container(
-                            padding: EdgeInsets.symmetric(
-                                horizontal: widget.horizontalPadding ?? 0),
-                            child: e.value,
+                            decoration: BoxDecoration(
+                                color: _highlightIndex == e.key ? Colors.grey
+                                    .withOpacity(0.05) : Colors.transparent,
+                                border: Border(bottom: widget.divider ?? BorderSide.none)
+                            ),
+                            child: Container(
+                              padding: EdgeInsets.symmetric(
+                                  horizontal: widget.horizontalPadding ?? 0),
+                              child: e.value,
+                            ),
                           ),
-                        ),
-                      )))
-                  .toList(),
+                        ))))
+                    .toList(),
+              ),
             ),
-          ),
-        )
-    );
+          )
+      );
+    });
   }
 
   @override
